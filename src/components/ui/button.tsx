@@ -5,31 +5,33 @@ import { Slot } from "radix-ui"
 import { cn } from "@/lib/utils"
 
 const buttonVariants = cva(
-  "group/button inline-flex shrink-0 items-center justify-center rounded-4xl border border-transparent bg-clip-padding text-sm font-medium whitespace-nowrap transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/30 active:not-aria-[haspopup]:translate-y-px disabled:pointer-events-none disabled:opacity-50 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
+  "group/button inline-flex shrink-0 items-center justify-center rounded border border-transparent bg-clip-padding text-sm font-medium tracking-wide whitespace-nowrap transition-all duration-300 outline-none select-none focus-visible:ring-3 focus-visible:ring-ring/25 active:not-aria-[haspopup]:brightness-90 disabled:pointer-events-none disabled:opacity-35 aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/25 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4",
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/80",
-        outline:
-          "border-border bg-background hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:bg-transparent dark:hover:bg-input/30",
+        default:
+          "border-[#DAA520] bg-primary text-primary-foreground shadow-[0_1px_3px_rgba(202,138,4,0.15)] hover:bg-[#B8780A] hover:shadow-[0_2px_8px_rgba(202,138,4,0.25)]",
         secondary:
-          "bg-secondary text-secondary-foreground hover:bg-secondary/80 aria-expanded:bg-secondary aria-expanded:text-secondary-foreground",
+          "border-primary/60 bg-transparent text-primary hover:bg-primary/15 hover:border-primary aria-expanded:bg-primary/15",
         ghost:
-          "hover:bg-muted hover:text-foreground aria-expanded:bg-muted aria-expanded:text-foreground dark:hover:bg-muted/50",
+          "text-[#BFA98A] hover:bg-[#3D2517] hover:text-[#F5E6D3] aria-expanded:bg-[#3D2517]",
         destructive:
-          "bg-destructive/10 text-destructive hover:bg-destructive/20 focus-visible:border-destructive/40 focus-visible:ring-destructive/20 dark:bg-destructive/20 dark:hover:bg-destructive/30 dark:focus-visible:ring-destructive/40",
+          "border-[#B91C1C] bg-destructive text-[#F5E6D3] shadow-[0_1px_3px_rgba(153,27,27,0.35)] hover:bg-[#7F1D1D] hover:shadow-[0_2px_8px_rgba(153,27,27,0.45)]",
+        outline:
+          "border-border bg-transparent text-foreground hover:border-primary hover:text-primary aria-expanded:border-primary",
+        accent:
+          "border-[#6D28D9] bg-accent text-accent-foreground shadow-[0_1px_3px_rgba(88,28,135,0.30)] hover:bg-[#4C1D95] hover:shadow-[0_2px_8px_rgba(88,28,135,0.40)]",
         link: "text-primary underline-offset-4 hover:underline",
       },
       size: {
-        default:
-          "h-9 gap-1.5 px-3 has-data-[icon=inline-end]:pr-2.5 has-data-[icon=inline-start]:pl-2.5",
-        xs: "h-6 gap-1 px-2.5 text-xs has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2 [&_svg:not([class*='size-'])]:size-3",
-        sm: "h-8 gap-1 px-3 has-data-[icon=inline-end]:pr-2 has-data-[icon=inline-start]:pl-2",
-        lg: "h-10 gap-1.5 px-4 has-data-[icon=inline-end]:pr-3 has-data-[icon=inline-start]:pl-3",
-        icon: "size-9",
-        "icon-xs": "size-6 [&_svg:not([class*='size-'])]:size-3",
+        default: "h-10 gap-1.5 px-5 text-sm",
+        xs:      "h-7  gap-1   px-3 text-xs [&_svg:not([class*='size-'])]:size-3",
+        sm:      "h-8  gap-1   px-3.5 text-[13px]",
+        lg:      "h-12 gap-2   px-7 text-base",
+        icon:    "size-10",
+        "icon-xs": "size-7 [&_svg:not([class*='size-'])]:size-3",
         "icon-sm": "size-8",
-        "icon-lg": "size-10",
+        "icon-lg": "size-12",
       },
     },
     defaultVariants: {
