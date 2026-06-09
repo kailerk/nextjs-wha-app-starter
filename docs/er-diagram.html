@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ER Diagram — WHA E-Commerce</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #06060f;
+      --glass: rgba(255,255,255,0.04);
+      --glass-border: rgba(255,255,255,0.09);
+      --text: #f0f0f8;
+      --muted: #8888aa;
+      --pk: #fbbf24;
+      --fk: #38bdf8;
+      --nn: #f87171;
+      --blue: #6366f1;
+      --purple: #a855f7;
+      --cyan: #22d3ee;
+      --green: #34d399;
+      --amber: #f59e0b;
+      --pink: #ec4899;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Inter', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      overflow-x: hidden;
+      cursor: default;
+    }
+
+    /* ── Parallax background layers ── */
+    .bg-wrap {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.35;
+      will-change: transform;
+      transition: transform 0.1s linear;
+    }
+
+    .orb-1 { width: 600px; height: 600px; background: #6366f1; top: -10%; left: -10%; }
+    .orb-2 { width: 500px; height: 500px; background: #a855f7; top: 40%; right: -15%; }
+    .orb-3 { width: 400px; height: 400px; background: #22d3ee; bottom: -5%; left: 30%; }
+    .orb-4 { width: 300px; height: 300px; background: #ec4899; top: 60%; left: 5%; opacity: 0.2; }
+
+    .grid-bg {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 60px 60px;
+      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 30%, transparent 100%);
+    }
+
+    /* ── Particles canvas ── */
+    #particles { position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+
+    /* ── Layout ── */
+    .wrapper { position: relative; z-index: 1; }
+
+    /* ── Hero ── */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 1rem;
+      border-radius: 999px;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.35);
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: #a5b4fc;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.8s ease both;
+    }
+
+    .hero-badge .pulse {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: #818cf8;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.5; transform: scale(0.7); }
+    }
+
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      background: linear-gradient(135deg, #fff 0%, #a5b4fc 50%, #22d3ee 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: fadeUp 0.8s 0.1s ease both;
+    }
+
+    .hero p {
+      margin-top: 1rem;
+      font-size: 1.05rem;
+      color: var(--muted);
+      max-width: 480px;
+      animation: fadeUp 0.8s 0.2s ease both;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2.5rem;
+      margin-top: 2.5rem;
+      animation: fadeUp 0.8s 0.35s ease both;
+    }
+
+    .stat { text-align: center; }
+    .stat-num {
+      font-size: 2.2rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--cyan), var(--purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; text-transform: uppercase; letter-spacing: 0.08em; }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--muted);
+      font-size: 0.75rem;
+      animation: bounce 2s infinite;
+    }
+
+    .scroll-hint svg { opacity: 0.5; }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(6px); }
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Section ── */
+    section { padding: 5rem 1.5rem; max-width: 1300px; margin: 0 auto; }
+
+    .section-head {
+      text-align: center;
+      margin-bottom: 3.5rem;
+    }
+
+    .section-head h2 {
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .section-head p { color: var(--muted); margin-top: 0.5rem; font-size: 0.95rem; }
+
+    /* ── Interactive diagram canvas ── */
+    .diagram-stage {
+      position: relative;
+      min-height: 720px;
+      border-radius: 24px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(20px);
+      overflow: hidden;
+      box-shadow: 0 0 80px rgba(99,102,241,0.08), inset 0 1px 0 rgba(255,255,255,0.06);
+    }
+
+    #conn-svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+    }
+
+    .conn-line {
+      fill: none;
+      stroke: rgba(99,102,241,0.25);
+      stroke-width: 1.5;
+      transition: stroke 0.3s, stroke-width 0.3s, filter 0.3s;
+    }
+
+    .conn-line.active {
+      stroke: rgba(99,102,241,0.9);
+      stroke-width: 2.5;
+      filter: drop-shadow(0 0 6px rgba(99,102,241,0.8));
+    }
+
+    .conn-line.flow {
+      stroke-dasharray: 8 6;
+      animation: dash 1.2s linear infinite;
+    }
+
+    @keyframes dash { to { stroke-dashoffset: -28; } }
+
+    .entity {
+      position: absolute;
+      z-index: 2;
+      width: 210px;
+      border-radius: 16px;
+      background: rgba(12,12,28,0.85);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      cursor: pointer;
+      transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1),
+                  box-shadow 0.35s,
+                  border-color 0.3s;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+
+    .entity:hover, .entity.active {
+      transform: translateY(-6px) scale(1.03);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.5), 0 0 30px var(--glow, rgba(99,102,241,0.3));
+      border-color: var(--accent, var(--blue));
+    }
+
+    .entity.active { z-index: 10; }
+
+    .entity.dimmed { opacity: 0.3; transform: scale(0.97); }
+
+    .entity-header {
+      padding: 0.85rem 1rem 0.7rem;
+      border-bottom: 1px solid var(--glass-border);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+    }
+
+    .entity-icon {
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .entity-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.78rem;
+      font-weight: 500;
+      color: var(--accent, var(--blue));
+    }
+
+    .entity-thai {
+      font-size: 0.68rem;
+      color: var(--muted);
+      margin-top: 0.1rem;
+    }
+
+    .entity-body { padding: 0.5rem 0; }
+
+    .col-row {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.3rem 1rem;
+      font-size: 0.75rem;
+      font-family: 'JetBrains Mono', monospace;
+      transition: background 0.2s;
+    }
+
+    .col-row:hover { background: rgba(255,255,255,0.04); }
+
+    .col-name { color: #c4c4e0; flex: 1; }
+    .col-type { color: var(--muted); font-size: 0.68rem; }
+
+    .badge {
+      font-size: 0.58rem;
+      font-weight: 700;
+      padding: 0.1rem 0.35rem;
+      border-radius: 4px;
+      letter-spacing: 0.04em;
+      flex-shrink: 0;
+    }
+
+    .badge.pk { background: rgba(251,191,36,0.2); color: var(--pk); }
+    .badge.fk { background: rgba(56,189,248,0.2); color: var(--fk); }
+    .badge.nn { background: rgba(248,113,113,0.15); color: var(--nn); }
+
+    /* Entity positions */
+    #e-categories  { top: 40px;  left: 50%; transform: translateX(-50%); --accent: var(--blue);   --glow: rgba(99,102,241,0.4); }
+    #e-products     { top: 220px; left: 28%;  --accent: var(--cyan);   --glow: rgba(34,211,238,0.4); }
+    #e-images       { top: 220px; right: 8%;  --accent: var(--purple); --glow: rgba(168,85,247,0.4); }
+    #e-customers    { top: 220px; left: 3%;   --accent: var(--green);  --glow: rgba(52,211,153,0.4); }
+    #e-orders       { top: 420px; left: 22%;  --accent: var(--amber);  --glow: rgba(245,158,11,0.4); }
+    #e-order-items  { top: 420px; left: 50%; transform: translateX(-50%); --accent: var(--pink); --glow: rgba(236,72,153,0.4); }
+
+    #e-categories:hover, #e-categories.active { transform: translateX(-50%) translateY(-6px) scale(1.03); }
+    #e-order-items:hover,  #e-order-items.active  { transform: translateX(-50%) translateY(-6px) scale(1.03); }
+
+    .icon-blue   { background: rgba(99,102,241,0.2); }
+    .icon-cyan   { background: rgba(34,211,238,0.2); }
+    .icon-purple { background: rgba(168,85,247,0.2); }
+    .icon-green  { background: rgba(52,211,153,0.2); }
+    .icon-amber  { background: rgba(245,158,11,0.2); }
+    .icon-pink   { background: rgba(236,72,153,0.2); }
+
+    /* ── Hint bar ── */
+    .hint-bar {
+      text-align: center;
+      margin-top: 1.25rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    .hint-bar kbd {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 5px;
+      background: rgba(255,255,255,0.07);
+      border: 1px solid rgba(255,255,255,0.12);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      color: #c4c4e0;
+    }
+
+    /* ── Detail panel ── */
+    .detail-panel {
+      position: fixed;
+      right: -420px;
+      top: 0;
+      width: 400px;
+      height: 100vh;
+      background: rgba(8,8,20,0.95);
+      border-left: 1px solid var(--glass-border);
+      backdrop-filter: blur(24px);
+      z-index: 100;
+      padding: 2rem 1.75rem;
+      overflow-y: auto;
+      transition: right 0.45s cubic-bezier(0.34,1.2,0.64,1);
+      box-shadow: -20px 0 60px rgba(0,0,0,0.5);
+    }
+
+    .detail-panel.open { right: 0; }
+
+    .panel-close {
+      position: absolute;
+      top: 1.25rem; right: 1.25rem;
+      width: 32px; height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--glass-border);
+      color: var(--muted);
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .panel-close:hover { background: rgba(255,255,255,0.12); color: #fff; }
+
+    .panel-table-name {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--panel-accent, var(--blue));
+      margin-bottom: 0.25rem;
+    }
+
+    .panel-thai { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+
+    .panel-section-title {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      margin-bottom: 0.75rem;
+      margin-top: 1.5rem;
+    }
+
+    .panel-col {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 0.25rem 0.75rem;
+      padding: 0.6rem 0.85rem;
+      border-radius: 10px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+    }
+
+    .panel-col-name { font-family: 'JetBrains Mono', monospace; font-weight: 500; }
+    .panel-col-type { color: var(--muted); font-size: 0.72rem; font-family: 'JetBrains Mono', monospace; text-align: right; }
+    .panel-col-badges { grid-column: 1 / -1; display: flex; gap: 0.35rem; flex-wrap: wrap; }
+
+    .panel-rel {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.65rem 0.85rem;
+      border-radius: 10px;
+      background: rgba(99,102,241,0.08);
+      border: 1px solid rgba(99,102,241,0.2);
+      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .panel-rel:hover { background: rgba(99,102,241,0.15); }
+    .panel-rel-arrow { color: var(--blue); font-size: 1rem; }
+    .panel-rel-card { font-family: 'JetBrains Mono', monospace; color: var(--cyan); }
+
+    /* ── FK Table section ── */
+    .fk-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1rem;
+    }
+
+    .fk-card {
+      padding: 1.25rem 1.5rem;
+      border-radius: 16px;
+      background: var(--glass);
+      border: 1px solid var(--glass-border);
+      backdrop-filter: blur(12px);
+      transition: transform 0.3s, box-shadow 0.3s, border-color 0.3s;
+      cursor: default;
+    }
+
+    .fk-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+      border-color: rgba(99,102,241,0.4);
+    }
+
+    .fk-card .fk-from {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--cyan);
+    }
+
+    .fk-card .fk-arrow {
+      font-size: 1.2rem;
+      color: var(--muted);
+      margin: 0.4rem 0;
+    }
+
+    .fk-card .fk-to {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.82rem;
+      color: var(--purple);
+    }
+
+    .fk-meta {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .fk-tag {
+      font-size: 0.68rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.06);
+      color: var(--muted);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .fk-tag.cascade { color: #f87171; border-color: rgba(248,113,113,0.3); background: rgba(248,113,113,0.08); }
+
+    /* ── Reveal on scroll ── */
+    .reveal {
+      opacity: 0;
+      transform: translateY(32px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+
+    /* ── Overlay ── */
+    .overlay {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 99;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s;
+      backdrop-filter: blur(4px);
+    }
+
+    .overlay.show { opacity: 1; pointer-events: all; }
+
+    /* ── Footer ── */
+    footer {
+      text-align: center;
+      padding: 3rem 1.5rem;
+      color: rgba(255,255,255,0.2);
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 900px) {
+      .diagram-stage { min-height: 1100px; }
+      #e-categories  { top: 20px; left: 50%; }
+      #e-customers    { top: 200px; left: 5%; }
+      #e-products     { top: 200px; left: 50%; transform: translateX(-50%); }
+      #e-images       { top: 200px; right: 5%; left: auto; }
+      #e-orders       { top: 480px; left: 10%; }
+      #e-order-items  { top: 480px; left: 50%; }
+      #e-products:hover, #e-products.active { transform: translateX(-50%) translateY(-6px) scale(1.03); }
+      .entity { width: 185px; }
+      .detail-panel { width: 100%; right: -100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Background -->
+  <div class="bg-wrap" id="bg-wrap">
+    <div class="orb orb-1" data-speed="0.03"></div>
+    <div class="orb orb-2" data-speed="0.05"></div>
+    <div class="orb orb-3" data-speed="0.02"></div>
+    <div class="orb orb-4" data-speed="0.04"></div>
+    <div class="grid-bg" id="grid-bg"></div>
+  </div>
+  <canvas id="particles"></canvas>
+
+  <div class="overlay" id="overlay"></div>
+
+  <!-- Detail side panel -->
+  <aside class="detail-panel" id="panel">
+    <button class="panel-close" id="panel-close" aria-label="ปิด">✕</button>
+    <div id="panel-content"></div>
+  </aside>
+
+  <div class="wrapper">
+
+    <!-- Hero -->
+    <div class="hero" id="hero">
+      <div class="hero-badge"><span class="pulse"></span> MariaDB · wha_ecommerce</div>
+      <h1>ER Diagram</h1>
+      <p>โครงสร้างฐานข้อมูล E-Commerce ครบทุกตาราง ทุก column และความสัมพันธ์</p>
+      <div class="hero-stats">
+        <div class="stat">
+          <div class="stat-num" data-target="6">0</div>
+          <div class="stat-label">ตาราง</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" data-target="5">0</div>
+          <div class="stat-label">Foreign Keys</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num" data-target="24">0</div>
+          <div class="stat-label">Columns</div>
+        </div>
+      </div>
+      <div class="scroll-hint">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+        เลื่อนลงเพื่อสำรวจ
+      </div>
+    </div>
+
+    <!-- Interactive Diagram -->
+    <section id="diagram-section">
+      <div class="section-head reveal">
+        <h2>แผนภาพ Interactive</h2>
+        <p>คลิกที่ตารางเพื่อดูรายละเอียด · เส้นเชื่อมจะ highlight อัตโนมัติ</p>
+      </div>
+
+      <div class="diagram-stage reveal" id="stage">
+        <svg id="conn-svg"></svg>
+
+        <!-- categories -->
+        <div class="entity" id="e-categories" data-table="categories">
+          <div class="entity-header">
+            <div class="entity-icon icon-blue">🏷️</div>
+            <div>
+              <div class="entity-name">categories</div>
+              <div class="entity-thai">หมวดหมู่สินค้า</div>
+            </div>
+          </div>
+          <div class="entity-body">
+            <div class="col-row"><span class="badge pk">PK</span><span class="col-name">id</span><span class="col-type">INT AI</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">name</span><span class="col-type">VARCHAR</span></div>
+          </div>
+        </div>
+
+        <!-- products -->
+        <div class="entity" id="e-products" data-table="products">
+          <div class="entity-header">
+            <div class="entity-icon icon-cyan">📦</div>
+            <div>
+              <div class="entity-name">products</div>
+              <div class="entity-thai">สินค้า</div>
+            </div>
+          </div>
+          <div class="entity-body">
+            <div class="col-row"><span class="badge pk">PK</span><span class="col-name">id</span><span class="col-type">INT AI</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">name</span><span class="col-type">VARCHAR</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">description</span><span class="col-type">TEXT</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">price</span><span class="col-type">DOUBLE</span></div>
+            <div class="col-row"><span class="badge fk">FK</span><span class="col-name">category_id</span><span class="col-type">INT</span></div>
+          </div>
+        </div>
+
+        <!-- product_images -->
+        <div class="entity" id="e-images" data-table="product_images">
+          <div class="entity-header">
+            <div class="entity-icon icon-purple">🖼️</div>
+            <div>
+              <div class="entity-name">product_images</div>
+              <div class="entity-thai">รูปภาพสินค้า</div>
+            </div>
+          </div>
+          <div class="entity-body">
+            <div class="col-row"><span class="badge pk">PK</span><span class="col-name">id</span><span class="col-type">INT AI</span></div>
+            <div class="col-row"><span class="badge fk">FK</span><span class="badge nn">NN</span><span class="col-name">product_id</span><span class="col-type">INT</span></div>
+            <div class="col-row"><span class="badge nn">NN</span><span class="col-name">image_name</span><span class="col-type">TEXT</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">created_at</span><span class="col-type">TIMESTAMP</span></div>
+          </div>
+        </div>
+
+        <!-- customers -->
+        <div class="entity" id="e-customers" data-table="customers">
+          <div class="entity-header">
+            <div class="entity-icon icon-green">👤</div>
+            <div>
+              <div class="entity-name">customers</div>
+              <div class="entity-thai">ลูกค้า</div>
+            </div>
+          </div>
+          <div class="entity-body">
+            <div class="col-row"><span class="badge pk">PK</span><span class="col-name">id</span><span class="col-type">INT AI</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">name</span><span class="col-type">VARCHAR</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">address</span><span class="col-type">VARCHAR</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">phone</span><span class="col-type">VARCHAR</span></div>
+          </div>
+        </div>
+
+        <!-- orders -->
+        <div class="entity" id="e-orders" data-table="orders">
+          <div class="entity-header">
+            <div class="entity-icon icon-amber">🧾</div>
+            <div>
+              <div class="entity-name">orders</div>
+              <div class="entity-thai">ออเดอร์</div>
+            </div>
+          </div>
+          <div class="entity-body">
+            <div class="col-row"><span class="badge pk">PK</span><span class="col-name">id</span><span class="col-type">INT AI</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">date</span><span class="col-type">DATETIME</span></div>
+            <div class="col-row"><span class="badge fk">FK</span><span class="col-name">customer_id</span><span class="col-type">INT</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">status</span><span class="col-type">ENUM</span></div>
+            <div class="col-row"><span class="col-name" style="padding-left:2.2rem">total_amount</span><span class="col-type">DOUBLE</span></div>
+          </div>
+        </div>
+
+        <!-- order_items -->
+        <div class="entity" id="e-order-items" data-table="order_items">
+          <div class="entity-header">
+            <div class="entity-icon icon-pink">🛒</div>
+            <div>
+              <div class="entity-name">order_items</div>
+              <div class="entity-thai">รายการในตะกร้า</div>
+            </div>
+          </div>
+          <div class="entity-body">
+            <div class="col-row"><span class="badge pk">PK</span><span class="col-name">id</span><span class="col-type">INT AI</span></div>
+            <div class="col-row"><span class="badge fk">FK</span><span class="badge nn">NN</span><span class="col-name">order_id</span><span class="col-type">INT</span></div>
+            <div class="col-row"><span class="badge fk">FK</span><span class="badge nn">NN</span><span class="col-name">product_id</span><span class="col-type">INT</span></div>
+            <div class="col-row"><span class="badge nn">NN</span><span class="col-name">quantity</span><span class="col-type">INT</span></div>
+            <div class="col-row"><span class="badge nn">NN</span><span class="col-name">price</span><span class="col-type">DOUBLE</span></div>
+          </div>
+        </div>
+      </div>
+
+      <p class="hint-bar reveal">💡 คลิกตารางเพื่อเปิดรายละเอียด · กด <kbd>Esc</kbd> เพื่อปิด</p>
+    </section>
+
+    <!-- FK Section -->
+    <section>
+      <div class="section-head reveal">
+        <h2>Foreign Keys ทั้งหมด</h2>
+        <p>ความสัมพันธ์ระหว่างตาราง · Cardinality · ON DELETE</p>
+      </div>
+      <div class="fk-grid reveal">
+        <div class="fk-card" data-highlight="products-categories">
+          <div class="fk-from">products.category_id</div>
+          <div class="fk-arrow">↓ N : 1</div>
+          <div class="fk-to">categories.id</div>
+          <div class="fk-meta">
+            <span class="fk-tag">ON DELETE: NO ACTION</span>
+            <span class="fk-tag">หมวดหมู่ 1 มีได้หลายสินค้า</span>
+          </div>
+        </div>
+        <div class="fk-card" data-highlight="orders-customers">
+          <div class="fk-from">orders.customer_id</div>
+          <div class="fk-arrow">↓ N : 1</div>
+          <div class="fk-to">customers.id</div>
+          <div class="fk-meta">
+            <span class="fk-tag">ON DELETE: NO ACTION</span>
+            <span class="fk-tag">ลูกค้า 1 สั่งได้หลายออเดอร์</span>
+          </div>
+        </div>
+        <div class="fk-card" data-highlight="order_items-orders">
+          <div class="fk-from">order_items.order_id</div>
+          <div class="fk-arrow">↓ N : 1</div>
+          <div class="fk-to">orders.id</div>
+          <div class="fk-meta">
+            <span class="fk-tag cascade">ON DELETE: CASCADE</span>
+            <span class="fk-tag">ลบออเดอร์ → ลบรายการด้วย</span>
+          </div>
+        </div>
+        <div class="fk-card" data-highlight="order_items-products">
+          <div class="fk-from">order_items.product_id</div>
+          <div class="fk-arrow">↓ N : 1</div>
+          <div class="fk-to">products.id</div>
+          <div class="fk-meta">
+            <span class="fk-tag">ON DELETE: NO ACTION</span>
+            <span class="fk-tag">สินค้า 1 อยู่ในหลายออเดอร์</span>
+          </div>
+        </div>
+        <div class="fk-card" data-highlight="product_images-products">
+          <div class="fk-from">product_images.product_id</div>
+          <div class="fk-arrow">↓ N : 1</div>
+          <div class="fk-to">products.id</div>
+          <div class="fk-meta">
+            <span class="fk-tag cascade">ON DELETE: CASCADE</span>
+            <span class="fk-tag">ลบสินค้า → ลบรูปด้วย</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>WHA E-Commerce · ER Diagram · create_table_ecom_sql.txt</footer>
+  </div>
+
+  <script>
+    /* ── Data ── */
+    const TABLES = {
+      categories: {
+        thai: 'หมวดหมู่สินค้า', color: '#6366f1', icon: '🏷️',
+        cols: [
+          { name: 'id', type: 'INT AUTO_INCREMENT', badges: ['PK'] },
+          { name: 'name', type: 'VARCHAR(255)', badges: [] },
+        ],
+        rels: [
+          { to: 'products', label: '1 หมวด → หลายสินค้า', col: 'category_id' },
+        ],
+      },
+      products: {
+        thai: 'สินค้า', color: '#22d3ee', icon: '📦',
+        cols: [
+          { name: 'id', type: 'INT AUTO_INCREMENT', badges: ['PK'] },
+          { name: 'name', type: 'VARCHAR(255)', badges: [] },
+          { name: 'description', type: 'TEXT', badges: [] },
+          { name: 'price', type: 'DOUBLE', badges: [] },
+          { name: 'category_id', type: 'INT', badges: ['FK'], ref: 'categories.id' },
+        ],
+        rels: [
+          { to: 'categories', label: 'อยู่ในหมวด', col: 'category_id' },
+          { to: 'product_images', label: '1 สินค้า → หลายรูป', col: 'product_id' },
+          { to: 'order_items', label: '1 สินค้า → หลายรายการ', col: 'product_id' },
+        ],
+      },
+      product_images: {
+        thai: 'รูปภาพสินค้า', color: '#a855f7', icon: '🖼️',
+        cols: [
+          { name: 'id', type: 'INT AUTO_INCREMENT', badges: ['PK'] },
+          { name: 'product_id', type: 'INT NOT NULL', badges: ['FK', 'NN'], ref: 'products.id' },
+          { name: 'image_name', type: 'TEXT NOT NULL', badges: ['NN'] },
+          { name: 'created_at', type: 'TIMESTAMP DEFAULT now()', badges: [] },
+        ],
+        rels: [
+          { to: 'products', label: 'รูปของสินค้า', col: 'product_id', onDelete: 'CASCADE' },
+        ],
+      },
+      customers: {
+        thai: 'ลูกค้า', color: '#34d399', icon: '👤',
+        cols: [
+          { name: 'id', type: 'INT AUTO_INCREMENT', badges: ['PK'] },
+          { name: 'name', type: 'VARCHAR(255)', badges: [] },
+          { name: 'address', type: 'VARCHAR(500)', badges: [] },
+          { name: 'phone', type: 'VARCHAR(20)', badges: [] },
+        ],
+        rels: [
+          { to: 'orders', label: '1 ลูกค้า → หลายออเดอร์', col: 'customer_id' },
+        ],
+      },
+      orders: {
+        thai: 'ออเดอร์', color: '#f59e0b', icon: '🧾',
+        cols: [
+          { name: 'id', type: 'INT AUTO_INCREMENT', badges: ['PK'] },
+          { name: 'date', type: 'DATETIME', badges: [] },
+          { name: 'customer_id', type: 'INT', badges: ['FK'], ref: 'customers.id' },
+          { name: 'status', type: "ENUM('delivered','received','processing')", badges: [] },
+          { name: 'total_amount', type: 'DOUBLE', badges: [] },
+        ],
+        rels: [
+          { to: 'customers', label: 'สั่งโดยลูกค้า', col: 'customer_id' },
+          { to: 'order_items', label: '1 ออเดอร์ → หลายรายการ', col: 'order_id', onDelete: 'CASCADE' },
+        ],
+      },
+      order_items: {
+        thai: 'รายการในตะกร้า', color: '#ec4899', icon: '🛒',
+        cols: [
+          { name: 'id', type: 'INT AUTO_INCREMENT', badges: ['PK'] },
+          { name: 'order_id', type: 'INT NOT NULL', badges: ['FK', 'NN'], ref: 'orders.id' },
+          { name: 'product_id', type: 'INT NOT NULL', badges: ['FK', 'NN'], ref: 'products.id' },
+          { name: 'quantity', type: 'INT NOT NULL', badges: ['NN'] },
+          { name: 'price', type: 'DOUBLE NOT NULL', badges: ['NN'] },
+        ],
+        rels: [
+          { to: 'orders', label: 'อยู่ในออเดอร์', col: 'order_id', onDelete: 'CASCADE' },
+          { to: 'products', label: 'คือสินค้า', col: 'product_id' },
+        ],
+      },
+    };
+
+    const CONNECTIONS = [
+      { from: 'categories', to: 'products', id: 'products-categories' },
+      { from: 'products', to: 'product_images', id: 'product_images-products' },
+      { from: 'customers', to: 'orders', id: 'orders-customers' },
+      { from: 'orders', to: 'order_items', id: 'order_items-orders' },
+      { from: 'products', to: 'order_items', id: 'order_items-products' },
+    ];
+
+    const ENTITY_IDS = {
+      categories: 'e-categories',
+      products: 'e-products',
+      product_images: 'e-images',
+      customers: 'e-customers',
+      orders: 'e-orders',
+      order_items: 'e-order-items',
+    };
+
+    /* ── Particles ── */
+    const canvas = document.getElementById('particles');
+    const ctx = canvas.getContext('2d');
+    let particles = [];
+
+    function initParticles() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      particles = Array.from({ length: 80 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 1.5 + 0.3,
+        vx: (Math.random() - 0.5) * 0.3,
+        vy: (Math.random() - 0.5) * 0.3,
+        alpha: Math.random() * 0.5 + 0.1,
+      }));
+    }
+
+    function drawParticles() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      particles.forEach(p => {
+        p.x += p.vx; p.y += p.vy;
+        if (p.x < 0) p.x = canvas.width;
+        if (p.x > canvas.width) p.x = 0;
+        if (p.y < 0) p.y = canvas.height;
+        if (p.y > canvas.height) p.y = 0;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(165,180,252,${p.alpha})`;
+        ctx.fill();
+      });
+      requestAnimationFrame(drawParticles);
+    }
+
+    /* ── Parallax mouse ── */
+    const orbs = document.querySelectorAll('.orb');
+    const gridBg = document.getElementById('grid-bg');
+    let mx = 0, my = 0;
+
+    document.addEventListener('mousemove', e => {
+      mx = (e.clientX / window.innerWidth - 0.5) * 2;
+      my = (e.clientY / window.innerHeight - 0.5) * 2;
+      orbs.forEach(orb => {
+        const speed = parseFloat(orb.dataset.speed);
+        orb.style.transform = `translate(${mx * speed * 80}px, ${my * speed * 80}px)`;
+      });
+      gridBg.style.transform = `translate(${mx * 12}px, ${my * 12}px)`;
+    });
+
+    /* ── Parallax scroll ── */
+    window.addEventListener('scroll', () => {
+      const scroll = window.scrollY;
+      orbs.forEach((orb, i) => {
+        orb.style.transform += ` translateY(${scroll * (0.05 + i * 0.02)}px)`;
+      });
+    });
+
+    /* ── Counter animation ── */
+    function animateCounters() {
+      document.querySelectorAll('.stat-num').forEach(el => {
+        const target = +el.dataset.target;
+        let current = 0;
+        const step = target / 40;
+        const timer = setInterval(() => {
+          current += step;
+          if (current >= target) { current = target; clearInterval(timer); }
+          el.textContent = Math.floor(current);
+        }, 30);
+      });
+    }
+
+    /* ── Reveal on scroll ── */
+    const revealObs = new IntersectionObserver(entries => {
+      entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal').forEach(el => revealObs.observe(el));
+
+    /* ── SVG connections ── */
+    const svg = document.getElementById('conn-svg');
+    const lines = {};
+
+    function getCenter(el) {
+      const stage = document.getElementById('stage');
+      const sr = stage.getBoundingClientRect();
+      const er = el.getBoundingClientRect();
+      return {
+        x: er.left + er.width / 2 - sr.left,
+        y: er.top + er.height / 2 - sr.top,
+      };
+    }
+
+    function drawConnections() {
+      svg.innerHTML = '';
+      const stage = document.getElementById('stage');
+      svg.setAttribute('viewBox', `0 0 ${stage.offsetWidth} ${stage.offsetHeight}`);
+
+      CONNECTIONS.forEach(conn => {
+        const fromEl = document.getElementById(ENTITY_IDS[conn.from]);
+        const toEl = document.getElementById(ENTITY_IDS[conn.to]);
+        if (!fromEl || !toEl) return;
+
+        const f = getCenter(fromEl);
+        const t = getCenter(toEl);
+        const mx = (f.x + t.x) / 2;
+        const my = (f.y + t.y) / 2;
+
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        const d = `M ${f.x} ${f.y} Q ${mx} ${my - 30} ${t.x} ${t.y}`;
+        path.setAttribute('d', d);
+        path.setAttribute('class', 'conn-line flow');
+        path.dataset.id = conn.id;
+        path.dataset.from = conn.from;
+        path.dataset.to = conn.to;
+        svg.appendChild(path);
+        lines[conn.id] = path;
+      });
+    }
+
+    /* ── Entity interaction ── */
+    let activeTable = null;
+    const panel = document.getElementById('panel');
+    const overlay = document.getElementById('overlay');
+    const panelContent = document.getElementById('panel-content');
+
+    function highlightTable(table) {
+      const related = new Set([table]);
+      CONNECTIONS.forEach(c => {
+        if (c.from === table) related.add(c.to);
+        if (c.to === table) related.add(c.from);
+      });
+
+      document.querySelectorAll('.entity').forEach(el => {
+        const t = el.dataset.table;
+        el.classList.toggle('active', t === table);
+        el.classList.toggle('dimmed', t !== table && !related.has(t));
+      });
+
+      Object.values(lines).forEach(line => {
+        const isActive = line.dataset.from === table || line.dataset.to === table;
+        line.classList.toggle('active', isActive);
+        line.classList.toggle('flow', !isActive);
+      });
+    }
+
+    function clearHighlight() {
+      document.querySelectorAll('.entity').forEach(el => {
+        el.classList.remove('active', 'dimmed');
+      });
+      Object.values(lines).forEach(line => {
+        line.classList.remove('active');
+        line.classList.add('flow');
+      });
+    }
+
+    function openPanel(table) {
+      const data = TABLES[table];
+      if (!data) return;
+      activeTable = table;
+      highlightTable(table);
+      panel.style.setProperty('--panel-accent', data.color);
+
+      const badgeHtml = b => b.map(t =>
+        `<span class="badge ${t.toLowerCase()}">${t}</span>`
+      ).join('');
+
+      const colsHtml = data.cols.map(c => `
+        <div class="panel-col">
+          <span class="panel-col-name">${c.name}</span>
+          <span class="panel-col-type">${c.type}</span>
+          <div class="panel-col-badges">${badgeHtml(c.badges)}${c.ref ? `<span class="badge fk">→ ${c.ref}</span>` : ''}</div>
+        </div>
+      `).join('');
+
+      const relsHtml = data.rels.map(r => `
+        <div class="panel-rel" data-jump="${r.to}">
+          <span class="panel-rel-arrow">→</span>
+          <div>
+            <div class="panel-rel-card">${r.to}</div>
+            <div style="color:var(--muted);font-size:0.75rem;margin-top:0.15rem">${r.label}${r.onDelete ? ` · ON DELETE ${r.onDelete}` : ''}</div>
+          </div>
+        </div>
+      `).join('');
+
+      panelContent.innerHTML = `
+        <div style="font-size:2rem;margin-bottom:0.5rem">${data.icon}</div>
+        <div class="panel-table-name">${table}</div>
+        <div class="panel-thai">${data.thai}</div>
+        <div class="panel-section-title">Columns (${data.cols.length})</div>
+        ${colsHtml}
+        <div class="panel-section-title">ความสัมพันธ์ (${data.rels.length})</div>
+        ${relsHtml}
+      `;
+
+      panelContent.querySelectorAll('.panel-rel').forEach(el => {
+        el.addEventListener('click', () => openPanel(el.dataset.jump));
+      });
+
+      panel.classList.add('open');
+      overlay.classList.add('show');
+    }
+
+    function closePanel() {
+      panel.classList.remove('open');
+      overlay.classList.remove('show');
+      activeTable = null;
+      clearHighlight();
+    }
+
+    document.querySelectorAll('.entity').forEach(el => {
+      el.addEventListener('click', () => openPanel(el.dataset.table));
+
+      // 3D tilt on hover
+      el.addEventListener('mousemove', e => {
+        if (activeTable) return;
+        const r = el.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
+        const base = el.id === 'e-categories' || el.id === 'e-order-items' ? 'translateX(-50%) ' : '';
+        el.style.transform = `${base}perspective(600px) rotateY(${x * 12}deg) rotateX(${-y * 12}deg) translateY(-4px)`;
+      });
+      el.addEventListener('mouseleave', () => {
+        if (!el.classList.contains('active')) el.style.transform = '';
+      });
+    });
+
+    document.getElementById('panel-close').addEventListener('click', closePanel);
+    overlay.addEventListener('click', closePanel);
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+
+    document.querySelectorAll('.fk-card').forEach(card => {
+      card.addEventListener('click', () => {
+        const id = card.dataset.highlight;
+        const conn = CONNECTIONS.find(c => c.id === id);
+        if (conn) openPanel(conn.from);
+      });
+    });
+
+    /* ── 3D tilt on entity cards in diagram ── */
+    /* ── Init ── */
+    window.addEventListener('load', () => {
+      initParticles();
+      drawParticles();
+      drawConnections();
+      setTimeout(animateCounters, 400);
+    });
+
+    window.addEventListener('resize', () => {
+      initParticles();
+      drawConnections();
+    });
+
+    // Hero parallax on scroll
+    const hero = document.getElementById('hero');
+    window.addEventListener('scroll', () => {
+      const s = window.scrollY;
+      if (s < window.innerHeight) {
+        hero.style.transform = `translateY(${s * 0.35}px)`;
+        hero.style.opacity = 1 - s / (window.innerHeight * 0.9);
+      }
+    });
+  </script>
+</body>
+</html>
