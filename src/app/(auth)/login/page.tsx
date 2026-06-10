@@ -21,7 +21,6 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { authClient } from "@/lib/auth-client"
-import { useRouter } from "next/navigation"
 
 const loginSchema = z.object({
   email: z
@@ -37,7 +36,6 @@ const loginSchema = z.object({
 type LoginFormValues = z.infer<typeof loginSchema>
 
 export default function LoginForm() {
-  const router = useRouter();
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -52,8 +50,11 @@ export default function LoginForm() {
           password: data.password,
          }, {
             onSuccess: () => {
-              alert('เข้าระบบสำเร็จ');
-              router.replace('/');
+              // กลับไปหน้าที่ตั้งใจจะไป (เช่น /dashboard) ถ้ามี — รับเฉพาะ path ภายในเพื่อกัน open redirect
+              const cb = new URLSearchParams(window.location.search).get('callbackURL');
+              const dest = cb && cb.startsWith('/') && !cb.startsWith('//') ? cb : '/';
+              // ใช้ full navigation เพื่อให้ server อ่าน session ใหม่ (เลี่ยง Router Cache ของหน้าเดิมที่ยังไม่ได้ login)
+              window.location.assign(dest);
             },
             onError: (ctx) => {
               alert(JSON.stringify(ctx.error));
