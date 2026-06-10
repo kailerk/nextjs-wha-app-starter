@@ -23,7 +23,7 @@ type RevenueChartProps = {
 export default function RevenueChart({ data }: RevenueChartProps) {
   return (
     <div className="h-72 w-full">
-      <ResponsiveContainer width="100%" height="100%">
+      <ResponsiveContainer width="100%" height={288}>
         <LineChart data={data} margin={{ top: 8, right: 16, bottom: 0, left: 8 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="rgba(202,138,4,0.15)" />
           <XAxis
