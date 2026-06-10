@@ -4,7 +4,7 @@ description: Guides new developers through this project's setup, architecture, a
 compatibility: Requires Node.js 22+
 license: MIT
 metadata:
-  author: Chansinee Mueangnu
+  author: kailerk treetipsounthorn
   version: "1.0"
 ---
 
